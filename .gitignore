@@ -1,0 +1,11 @@
+# Ignore PyCharm project files
+.idea/
+NEETprep.iml
+
+# Ignore Python bytecode and cache files
+__pycache__/
+*.py[cod]
+
+# Ignore specific files
+browsers.json
+test.py
