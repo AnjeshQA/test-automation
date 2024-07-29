@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from NEETprep_Login import driver
 
 # Define a wait time for each element
-wait_time = 4
+wait_time = 2
 
 # Function to wait and click element
 def wait_and_click(xpath, timeout=wait_time):
@@ -16,7 +16,7 @@ def wait_and_click(xpath, timeout=wait_time):
 def execute_test_flow():
     try:
         # Initial wait
-        time.sleep(4)
+        time.sleep(2)
 
         # Select Practice Session--Custom Practice Session
         wait_and_click("//a[@class='custom-practice-btn']")
