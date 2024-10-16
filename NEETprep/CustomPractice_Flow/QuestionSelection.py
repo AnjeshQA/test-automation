@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from NEETprep.NEETprep_Login import driver
 
 # Define a wait time for each element
-wait_time = 2
+wait_time = 4
 
 # Function to wait and click element
 def wait_and_click(xpath, timeout=wait_time):
