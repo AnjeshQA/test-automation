@@ -3,7 +3,7 @@ import traceback
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from NEETprep_Login import driver
+from NEETprep.NEETprep_Login import driver
 
 # Define a wait time for each element
 wait_time = 2
@@ -19,8 +19,7 @@ def execute_test_flow():
         time.sleep(2)
 
         # Select Practice Session--Custom Practice Session
-        wait_and_click("//a[@class='custom-practice-btn']")
-
+        wait_and_click("//a[@id='customPracticeBtn']")
         # Click "Custom Practice" option https://dev.neetprep.com/newui/subjectSelection
         wait_and_click("//div[@class='flex-grow overflow-auto px-4']//button[1]")
 
@@ -77,19 +76,22 @@ def execute_test_flow():
         """)
         time.sleep(120)
 
-
     except Exception as e:
         # Capture the exception message and traceback
         error_message = str(e).replace("'", "\\'").replace("\n", "\\n")
         tb = traceback.format_exc().replace("'", "\\'").replace("\n", "\\n")
 
-        # Extract the line number from the traceback
-        line_number = tb.split(", ")[1].split(" ")[1]
+        # Extract the line number from the traceback safely
+        try:
+            line_number = tb.split(", ")[1].split(" ")[1]
+        except IndexError:
+            line_number = "Unknown"
 
-        # Inject JavaScript to display the failure message on the browser screen
+        # Inject JavaScript to display the failure message on the browser screen with a "Close" button
         driver.execute_script(f"""
             var message = document.createElement('div');
-            message.innerHTML = '<strong style="background-color: yellow; color: black;">Test execution failed at line {line_number}</strong>: {error_message}';            message.style.position = 'fixed';
+            message.innerHTML = '<strong style="background-color: yellow; color: black;">Test execution failed at line {line_number}</strong>: {error_message}<br><br><button id="closeButton" style="padding:10px; background-color:black; color:white; border:none; border-radius:5px; cursor:pointer;">Close</button>';
+            message.style.position = 'fixed';
             message.style.top = '50%';
             message.style.left = '50%';
             message.style.borderRadius = '50px';
@@ -100,7 +102,13 @@ def execute_test_flow():
             message.style.fontSize = '20px';
             message.style.zIndex = '1000';
             document.body.appendChild(message);
+            
+            // Add an event listener to the "Close" button
+            document.getElementById('closeButton').addEventListener('click', function() {{
+                message.style.display = 'none'; // Hide the message when the button is clicked
+        }});
         """)
+
         time.sleep(600)
 
 # Execute the test flow
