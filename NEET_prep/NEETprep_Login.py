@@ -14,7 +14,7 @@ driver.find_element(By.ID, "number").send_keys("8882113808")
 #driver.find_element(By.XPATH,"(//button[normalize-space()='Sign in with Google'])[1]").click()
 driver.find_element(By.XPATH, "//a[@id='otp_button']").click()
 time.sleep(3)
-driver.find_element(By.XPATH, "(//input[@placeholder='Password'])[2]").send_keys("8882113808")
+driver.find_element(By.XPATH, "(//input[@placeholder='Password'])[2]").send_keys("")
 driver.find_element(By.XPATH, "//a[@id='otp_button']").click()
 
 time.sleep(2)
