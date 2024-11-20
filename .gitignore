@@ -9,3 +9,4 @@ __pycache__/
 # Ignore specific files
 browsers.json
 test.py
+test1.py

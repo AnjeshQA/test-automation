@@ -21,8 +21,9 @@ def execute_test_flow():
         # Select Practice Session--Custom Practice Session
         wait_and_click("//a[@id='customPracticeBtn']")
         # Click "Custom Practice" option https://dev.neetprep.com/newui/subjectSelection
+        time.sleep(3)
         wait_and_click("//div[@class='flex-grow overflow-auto px-4']//button[1]")
-
+        time.sleep(3)
         # Click to proceed
         wait_and_click("//div[@class='p-4 w-full absolute bottom-0']")
 
