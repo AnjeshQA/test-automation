@@ -4,9 +4,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from NEETprep.NEETprep_Login import driver
+from selenium.webdriver.support.ui import Select
 
 # Define a wait time for each element
-wait_time = 10
+wait_time = 2
 
 # Function to wait and click element
 def wait_and_click(xpath, timeout=wait_time):
@@ -22,59 +23,122 @@ def wait_and_click(xpath, timeout=wait_time):
 def execute_test_flow():
     try:
         # Initial wait
+        time.sleep(4)
+
+        #wait_and_click("(//a[@id='customPracticeBtn'])[1]")
+        driver.find_element(By.XPATH, "(//a[@id='customPracticeBtn'])[1]").click()
+        #wait_and_click("(//span[normalize-space()='Custom Practice Session'])[1]")
+
+
+
+        #driver.get("https://www.neetprep.com/home")
+
+        # Verify the page is loaded &  # Select Practice Session--Custom Practice Session
+        #WebDriverWait(driver, wait_time).until(
+        #   EC.presence_of_element_located((By.XPATH, "(//a[@id='customPracticeBtn'])[1]"))
+        #).click()
+
+
+        #select the chapter
+        select_Subject = driver.find_element(by=By.XPATH, value="//body//div//button[2]")
+        select_Subject.click()
+
+        time.sleep(2)
+        #click Next Button
+
+        nextButton = driver.find_element(By.XPATH, "//button[normalize-space()='Next']")
+        nextButton.click()
+
         time.sleep(2)
 
-        # Navigate to the target page directly
-        driver.get("https://www.neetprep.com/newui/subjectSelection")
+        #select Chapters Topic
+        #driver.find_element(By.XPATH, "(//input[@id='c645'])[1]").click()
+        driver.find_element(By.CSS_SELECTOR, "#c645").click()
 
-        # Verify the page is loaded
-        WebDriverWait(driver, wait_time).until(
-            EC.presence_of_element_located((By.XPATH, "//a[@id='customPracticeBtn']"))
-        )
+        time.sleep(2)
 
-        # Select Practice Session--Custom Practice Session
-        wait_and_click("//a[@id='customPracticeBtn']")
+        #Chapter level difficulty and filter
 
-        # Click "Custom Practice" option
-        wait_and_click("//div[@class='flex-grow overflow-auto px-4']//button[1]")
 
-        # Proceed
-        wait_and_click("//div[@class='p-4 w-full absolute bottom-0']")
+        driver.find_element(By.XPATH, "//button[normalize-space()='Continue']").click()
 
-        # Choose chapter & topic
-        wait_and_click("(//input[@type='checkbox'])[1]")
+        time.sleep(2)
 
-        # Click Continue
-        wait_and_click("//button[normalize-space()='Continue']")
+        driver.find_element(By.XPATH, "//p[normalize-space()='Difficulty Level']").click()
 
-        # Additional interactions
-        wait_and_click("(//div[@class='cursor-pointer flex items-center justify-between gap-4 w-full'])[1]")
-        wait_and_click("//input[@id='Easy']")
-        wait_and_click("//button[normalize-space()='Okay']")
-        wait_and_click("//p[normalize-space()='Include Bookmarked']")
-        wait_and_click("(//*[name()='path'])[6]")
-        wait_and_click("//p[normalize-space()='Include Incorrect']")
-        wait_and_click("(//*[name()='path'])[6]")
-        wait_and_click("(//div[@class='cursor-pointer flex items-center justify-between gap-4 w-full'])[2]")
-        wait_and_click("//button[normalize-space()='Continue']")
+        time.sleep(1)
 
-        # Inject JavaScript to display success message
-        driver.execute_script("""
-            var message = document.createElement('div');
-            message.innerHTML = "Congratulations! Test flow completed successfully.";
-            message.style.position = 'fixed';
-            message.style.top = '20px';
-            message.style.left = '20px';
-            message.style.borderRadius = '50px';
-            message.style.padding = '20px';
-            message.style.backgroundColor = '#4CAF50';
-            message.style.color = 'white';
-            message.style.fontSize = '20px';
-            message.style.fontWeight = '600';
-            message.style.zIndex = '1000';
-            document.body.appendChild(message);
-        """)
-        time.sleep(120)
+        driver.find_element(By.XPATH, "//input[@id='Easy']").click()
+
+        time.sleep(1)
+
+        driver.find_element(By.XPATH, "//input[@id='Medium']").click()
+
+        time.sleep(1)
+
+        driver.find_element(By.XPATH, "//input[@id='Hard']").click()
+
+        time.sleep(1)
+
+        driver.find_element(By.XPATH, "//input[@id='Include Bookmarked']").click()
+
+        time.sleep(1)
+
+        driver.find_element(By.XPATH, "//input[@id='Include Incorrect']").click()
+
+        time.sleep(1)
+
+        driver.find_element(By.XPATH, "//button[normalize-space()='Continue']").click()
+
+
+        time.sleep(2)
+
+
+        #free trail page-- select question count.
+
+        select_Question_count=driver.find_element(By.XPATH, "//span[normalize-space()='5 questions']")
+        select_Question_count.click()
+        #driver.find_element(By.CSS_SELECTOR, "button[class='w-full bg-[#E6A123] hover:bg-[#cc9210] transition-colors text-white py-3.5 px-5 rounded-[10px] text-base font-semibold']").click()
+
+        time.sleep(2)
+
+        #Question Option select
+
+        #driver.find_element(By.XPATH, "//div[contains(@class,'flex items-center gap-x-4 mt-5 py-4 px-4')]//button[3]").click()
+
+        time.sleep(1)
+
+        driver.find_element(By.XPATH, "(//*[name()='path'][@id='Vector_3'])[1]").click()
+
+        time.sleep(2)
+        #print("Error at Next action")
+        time.sleep(2)
+
+        #Next Button to enter Question Page.
+        driver.find_element(By.XPATH, "(//button[normalize-space()=\"Let's go\"])[1]").click()
+
+
+        time.sleep(3)
+
+        repeat_count = 5
+
+        for _ in range(repeat_count):
+            wait_and_click("(//button[@id='option-3'])[1]",2)
+            wait_and_click("(//*[name()='path'])[13]",2)
+
+
+        wait_and_click("(//button[normalize-space()='Yes'])[1]",2)
+        time.sleep(2)
+
+        wait_and_click("(//button[normalize-space()='Continue'])[1]",2)
+        time.sleep(2)
+
+        wait_and_click("(//button[normalize-space()='Continue your journey'])[1]",2)
+        time.sleep(2)
+
+        wait_and_click("(//button[normalize-space()='Go Home'])[1]",2)
+
+        time.sleep(60)
 
     except Exception as e:
         # Capture the exception message and traceback
