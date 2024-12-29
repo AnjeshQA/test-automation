@@ -6,11 +6,17 @@ from selenium.webdriver.common.by import By
 from NEETprep.NEETprep_Login import driver
 
 # Define a wait time for each element
-wait_time = 4
+wait_time = 10
 
 # Function to wait and click element
 def wait_and_click(xpath, timeout=wait_time):
-    WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((By.XPATH, xpath))).click()
+    try:
+        element = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((By.XPATH, xpath)))
+        driver.execute_script("arguments[0].scrollIntoView(true);", element)  # Scroll to element
+        element.click()
+    except Exception as e:
+        driver.save_screenshot("error_screenshot.png")  # Save screenshot on failure
+        raise e
 
 # Function to execute the test flow
 def execute_test_flow():
@@ -18,13 +24,21 @@ def execute_test_flow():
         # Initial wait
         time.sleep(2)
 
+        # Navigate to the target page directly
+        driver.get("https://www.neetprep.com/newui/subjectSelection")
+
+        # Verify the page is loaded
+        WebDriverWait(driver, wait_time).until(
+            EC.presence_of_element_located((By.XPATH, "//a[@id='customPracticeBtn']"))
+        )
+
         # Select Practice Session--Custom Practice Session
         wait_and_click("//a[@id='customPracticeBtn']")
-        # Click "Custom Practice" option https://dev.neetprep.com/newui/subjectSelection
-        time.sleep(3)
+
+        # Click "Custom Practice" option
         wait_and_click("//div[@class='flex-grow overflow-auto px-4']//button[1]")
-        time.sleep(3)
-        # Click to proceed
+
+        # Proceed
         wait_and_click("//div[@class='p-4 w-full absolute bottom-0']")
 
         # Choose chapter & topic
@@ -33,36 +47,21 @@ def execute_test_flow():
         # Click Continue
         wait_and_click("//button[normalize-space()='Continue']")
 
-        # Select chapter and difficulty
+        # Additional interactions
         wait_and_click("(//div[@class='cursor-pointer flex items-center justify-between gap-4 w-full'])[1]")
-
-        # Select difficulty level
         wait_and_click("//input[@id='Easy']")
-
-        # Click Okay
         wait_and_click("//button[normalize-space()='Okay']")
-
-        # Include bookmarked
         wait_and_click("//p[normalize-space()='Include Bookmarked']")
         wait_and_click("(//*[name()='path'])[6]")
-
-        # Include incorrect
         wait_and_click("//p[normalize-space()='Include Incorrect']")
         wait_and_click("(//*[name()='path'])[6]")
-
-        # Select second chapter
         wait_and_click("(//div[@class='cursor-pointer flex items-center justify-between gap-4 w-full'])[2]")
+        wait_and_click("//button[normalize-space()='Continue']")
 
-        # Click Continue
-        wait_and_click("//button[normalize-space()= 'Continue']")
-
-        # Final wait for the page to load
-        time.sleep(2)
-
-        # Inject JavaScript to display the success message on the browser screen
+        # Inject JavaScript to display success message
         driver.execute_script("""
             var message = document.createElement('div');
-            message.innerHTML = "Congratulations! The test flow for the 'Question Selection' trial user has been completed";
+            message.innerHTML = "Congratulations! Test flow completed successfully.";
             message.style.position = 'fixed';
             message.style.top = '20px';
             message.style.left = '20px';
@@ -79,38 +78,31 @@ def execute_test_flow():
 
     except Exception as e:
         # Capture the exception message and traceback
-        error_message = str(e).replace("'", "\\'").replace("\n", "\\n")
-        tb = traceback.format_exc().replace("'", "\\'").replace("\n", "\\n")
+        error_message = str(e)
+        traceback_str = traceback.format_exc()
 
-        # Extract the line number from the traceback safely
-        try:
-            line_number = tb.split(", ")[1].split(" ")[1]
-        except IndexError:
-            line_number = "Unknown"
+        # Log error and save screenshot
+        print("Error:", error_message)
+        print("Traceback:", traceback_str)
+        driver.save_screenshot("error_screenshot.png")
 
-        # Inject JavaScript to display the failure message on the browser screen with a "Close" button
+        # Inject failure message into the browser
         driver.execute_script(f"""
             var message = document.createElement('div');
-            message.innerHTML = '<strong style="background-color: yellow; color: black;">Test execution failed at line {line_number}</strong>: {error_message}<br><br><button id="closeButton" style="padding:10px; background-color:black; color:white; border:none; border-radius:5px; cursor:pointer;">Close</button>';
+            message.innerHTML = "Test failed: {error_message.replace("'", "\\'")}";
             message.style.position = 'fixed';
-            message.style.top = '50%';
-            message.style.left = '50%';
+            message.style.top = '20px';
+            message.style.left = '20px';
             message.style.borderRadius = '50px';
-            message.style.transform = 'translate(-50%, -50%)';
             message.style.padding = '20px';
             message.style.backgroundColor = '#f44336';
             message.style.color = 'white';
             message.style.fontSize = '20px';
+            message.style.fontWeight = '600';
             message.style.zIndex = '1000';
             document.body.appendChild(message);
-            
-            // Add an event listener to the "Close" button
-            document.getElementById('closeButton').addEventListener('click', function() {{
-                message.style.display = 'none'; // Hide the message when the button is clicked
-        }});
         """)
-
-        time.sleep(600)
+        time.sleep(120)
 
 # Execute the test flow
 execute_test_flow()
