@@ -1,0 +1,14 @@
+2026-03-09 14:11:00,663 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> shop_click_searchBox_CSS
+2026-03-09 14:11:00,946 - BasePage.py:[53] - [INFO] - Step: Typing 'HYTS HOME TEST SERIES LATEST EDITION' into -> shop_inputSearchBox_XPATH
+2026-03-09 14:11:01,272 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> click_HYTS_SearchResults_XPATH
+2026-03-09 14:11:02,712 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> shop_addToCart_XPATH
+2026-03-09 14:11:03,143 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> shop_checkout_XPATH
+2026-03-09 14:17:22,784 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> shop_click_searchBox_CSS
+2026-03-09 14:17:23,170 - BasePage.py:[53] - [INFO] - Step: Typing 'HYTS HOME TEST SERIES LATEST EDITION' into -> shop_inputSearchBox_XPATH
+2026-03-09 14:17:23,584 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> click_HYTS_SearchResults_XPATH
+2026-03-09 14:17:25,006 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> shop_addToCart_XPATH
+2026-03-09 14:18:59,984 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> shop_click_searchBox_CSS
+2026-03-09 14:19:00,159 - BasePage.py:[53] - [INFO] - Step: Typing 'HYTS HOME TEST SERIES LATEST EDITION' into -> shop_inputSearchBox_XPATH
+2026-03-09 14:19:00,432 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> click_HYTS_SearchResults_XPATH
+2026-03-09 14:19:02,185 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> shop_addToCart_XPATH
+2026-03-09 14:19:02,359 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> shop_checkout_XPATH

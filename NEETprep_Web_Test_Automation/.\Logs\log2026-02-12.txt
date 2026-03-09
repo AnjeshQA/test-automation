@@ -1,0 +1,48 @@
+2026-02-12 21:15:20,014 - BasePage.py:[56] - [INFO] - Step: Typing '9000000000' into -> mobile_number_ID
+2026-02-12 21:15:20,563 - BasePage.py:[56] - [INFO] - Step: Typing '876302' into -> mobile_number_ID
+2026-02-12 21:18:38,949 - BasePage.py:[56] - [INFO] - Step: Typing '9000000000' into -> login_enterMobileNo_XPATH
+2026-02-12 21:18:59,485 - BasePage.py:[42] - [ERROR] - FAIL: Element 'login_enterMobileNo_XPATH' not visible after timeout at: (//input[@id='number'])[1]
+2026-02-12 21:18:59,979 - BasePage.py:[56] - [INFO] - Step: Typing '876302' into -> login_enterMobileNo_XPATH
+2026-02-12 21:19:11,591 - BasePage.py:[45] - [ERROR] - Unexpected error finding 'login_enterMobileNo_XPATH': ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-02-12 21:19:24,117 - BasePage.py:[56] - [INFO] - Step: Typing '9000000000' into -> login_enterMobileNo_XPATH
+2026-02-12 21:19:44,701 - BasePage.py:[42] - [ERROR] - FAIL: Element 'login_enterMobileNo_XPATH' not visible after timeout at: (//input[@id='number'])[1]
+2026-02-12 21:19:45,103 - BasePage.py:[56] - [INFO] - Step: Typing '876302' into -> login_enterMobileNo_XPATH
+2026-02-12 21:20:43,694 - BasePage.py:[56] - [INFO] - Step: Typing '9000000000' into -> login_enterMobileNo_XPATH
+2026-02-12 21:21:04,268 - BasePage.py:[42] - [ERROR] - FAIL: Element 'login_enterMobileNo_XPATH' not visible after timeout at: (//input[@id='number'])[1]
+2026-02-12 21:21:04,684 - BasePage.py:[56] - [INFO] - Step: Typing '876302' into -> mobile_number_ID
+2026-02-12 21:24:40,925 - BasePage.py:[53] - [INFO] - Step: Typing '9000000000' into -> login_enterMobileNo_XPATH
+2026-02-12 21:25:01,502 - BasePage.py:[48] - [ERROR] - FAIL: Element 'login_enterMobileNo_XPATH' not visible at: (//input[@id='number'])[1]
+2026-02-12 21:25:02,008 - BasePage.py:[53] - [INFO] - Step: Typing '876302' into -> mobile_number_ID
+2026-02-12 21:25:02,014 - BasePage.py:[25] - [ERROR] - Could not find key 'mobile_number_id' in config file.
+2026-02-12 21:45:19,116 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_close_classroom_dialogBox_XPATH
+2026-02-12 21:46:02,348 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_close_classroom_dialogBox_XPATH
+2026-02-12 21:46:02,534 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_drawerMenu_XPATH
+2026-02-12 21:46:22,646 - BasePage.py:[48] - [ERROR] - FAIL: Element 'landingPage_drawerMenu_XPATH' not visible at: (//span[@class='navbar-toggler-icon'])[1]
+2026-02-12 21:46:23,915 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_close_classroom_dialogBox_XPATH
+2026-02-12 21:46:44,164 - BasePage.py:[48] - [ERROR] - FAIL: Element 'landingPage_close_classroom_dialogBox_XPATH' not visible at: (//span[@aria-hidden='true'])[1]
+2026-02-12 21:47:15,378 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_drawerMenu_XPATH
+2026-02-12 21:47:35,692 - BasePage.py:[48] - [ERROR] - FAIL: Element 'landingPage_drawerMenu_XPATH' not visible at: (//span[@class='navbar-toggler-icon'])[1]
+2026-02-12 21:47:37,512 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_drawerMenu_XPATH
+2026-02-12 21:48:26,432 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_close_classroom_dialogBox_XPATH
+2026-02-12 21:48:26,616 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_loginButton
+2026-02-12 21:48:26,618 - BasePage.py:[40] - [ERROR] - Invalid locator suffix for: landingPage_loginButton
+2026-02-12 21:48:27,954 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_close_classroom_dialogBox_XPATH
+2026-02-12 21:48:48,298 - BasePage.py:[48] - [ERROR] - FAIL: Element 'landingPage_close_classroom_dialogBox_XPATH' not visible at: (//span[@aria-hidden='true'])[1]
+2026-02-12 21:49:48,768 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_close_classroom_dialogBox_XPATH
+2026-02-12 21:49:49,415 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_loginButton
+2026-02-12 21:49:49,417 - BasePage.py:[40] - [ERROR] - Invalid locator suffix for: landingPage_loginButton
+2026-02-12 21:49:50,478 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_close_classroom_dialogBox_XPATH
+2026-02-12 21:50:10,693 - BasePage.py:[48] - [ERROR] - FAIL: Element 'landingPage_close_classroom_dialogBox_XPATH' not visible at: (//span[@aria-hidden='true'])[1]
+2026-02-12 21:50:46,744 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_close_classroom_dialogBox_XPATH
+2026-02-12 21:50:47,000 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_loginButton
+2026-02-12 21:50:47,001 - BasePage.py:[25] - [ERROR] - Could not find key 'landingpage_loginbutton' in config file.
+2026-02-12 21:50:48,105 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_close_classroom_dialogBox_XPATH
+2026-02-12 21:51:08,375 - BasePage.py:[48] - [ERROR] - FAIL: Element 'landingPage_close_classroom_dialogBox_XPATH' not visible at: (//span[@aria-hidden='true'])[1]
+2026-02-12 21:53:01,459 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_close_classroom_dialogBox_XPATH
+2026-02-12 21:53:01,741 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_loginButton_XPATH
+2026-02-12 21:53:03,456 - BasePage.py:[53] - [INFO] - Step: Typing '9000000000' into -> login_enterMobileNo_XPATH
+2026-02-12 21:53:03,772 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> login_TC_constant_checkBox_XPATH
+2026-02-12 21:53:03,916 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> login_sendOTP_button_XPATH
+2026-02-12 21:53:04,050 - BasePage.py:[53] - [INFO] - Step: Typing '876302' into -> login_enterOTP_XPATH
+2026-02-12 21:53:06,072 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> landingPage_close_classroom_dialogBox_XPATH
+2026-02-12 21:53:26,251 - BasePage.py:[48] - [ERROR] - FAIL: Element 'landingPage_close_classroom_dialogBox_XPATH' not visible at: (//span[@aria-hidden='true'])[1]
