@@ -1,18 +1,34 @@
-.idea/
+# --- Python Environment & Cache ---
 .venv/
-.DS_Store
+venv/
+ENV/
 __pycache__/
-*.csv
-Logs/
-.Logs/
+*.py[cod]
+*$py.class
+
+# --- MacOS System Files ---
+.DS_Store
+
+# --- IDEs (PyCharm / Aqua / VS Code) ---
+.idea/
+.vscode/
+*.swp
+*.iml
+
+# --- Test Reports & Logs ---
 allure-results/
+allure-report/
 Reports/
-.idea/
-.venv/
-.DS_Store
-__pycache__/
-*.csv
 Logs/
 .Logs/
+*.log
+
+# --- Data Files (Avoid uploading local data) ---
+*.csv
+*.xls
+*.xlsx
 *.xlxs
-.xls
+
+# --- Local Secrets ---
+.env
+Utilities/config.ini.local
