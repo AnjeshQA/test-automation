@@ -7,3 +7,7 @@ Logs/
 .Logs/
 allure-results/
 Reports/
+allure-results/
+.pytest_cache/
+__pycache__/
+*.pyc

@@ -5,3 +5,7 @@ __pycache__/
 *.csv
 Logs/
 .Logs/
+allure-results/
+.pytest_cache/
+__pycache__/
+*.pyc
