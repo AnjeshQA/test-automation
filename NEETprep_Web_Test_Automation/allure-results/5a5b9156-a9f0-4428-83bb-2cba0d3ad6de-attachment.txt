@@ -1,9 +1,0 @@
-[32mINFO    [0m WDM:logger.py:11 ====== WebDriver manager ======
-[32mINFO    [0m WDM:logger.py:11 Get LATEST chromedriver version for google-chrome
-[32mINFO    [0m WDM:logger.py:11 Get LATEST chromedriver version for google-chrome
-[32mINFO    [0m WDM:logger.py:11 Driver [/Users/ssd/.wdm/drivers/chromedriver/mac64/145.0.7632.117/chromedriver-mac-x64/chromedriver] found in cache
-[32mINFO    [0m Pages.BasePage:BasePage.py:60 Step: Clicking on Element -> shop_click_searchBox_CSS
-[32mINFO    [0m Pages.BasePage:BasePage.py:53 Step: Typing 'HYTS HOME TEST SERIES LATEST EDITION' into -> shop_inputSearchBox_XPATH
-[32mINFO    [0m Pages.BasePage:BasePage.py:60 Step: Clicking on Element -> click_HYTS_SearchResults_XPATH
-[32mINFO    [0m Pages.BasePage:BasePage.py:60 Step: Clicking on Element -> shop_addToCart_XPATH
-[32mINFO    [0m Pages.BasePage:BasePage.py:60 Step: Clicking on Element -> shop_checkout_XPATH
