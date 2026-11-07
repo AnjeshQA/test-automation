@@ -1,13 +1,48 @@
-.idea/
-.venv/
-.DS_Store
+# =============================================================================
+# Files that must never be committed (generated, machine-specific or secret).
+# Applies to the whole repo, including NEETprep_Web_Test_Automation/.
+# =============================================================================
+
+# --- Python ---
 __pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# --- IDE / editor / OS ---
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+.ai/
+
+# --- Secrets / local environment (keep credentials out of git) ---
+.env
+.env.*
+
+# --- Test output (recreated on every run) ---
+# Allure raw results and generated HTML reports
+allure-results/
+allure-report/
+Reports/
+reports/
+# Playwright screenshots / traces / videos on failure
+test-results/
+playwright-report/
+# Old ad-hoc failure screenshots
+failed_test_screenshot*.png
 *.csv
+
+# --- Logs ---
 Logs/
 .Logs/
-allure-results/
-Reports/
-allure-results/
-.pytest_cache/
-__pycache__/
-*.pyc
+*.log
+# Old Windows-style log paths (".\Logs\log<date>.txt") created on Mac/Linux
+*\\Logs\\*
+
+# --- Excel lock files (created while testdata.xlsx is open) ---
+~$*.xlsx
