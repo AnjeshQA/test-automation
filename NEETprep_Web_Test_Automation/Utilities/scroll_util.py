@@ -1,3 +1,10 @@
+"""
+ScrollUtil - mobile (Appium) scroll/swipe helpers left over from the old mobile framework.
+
+STATUS: not used by the web (Playwright) tests. For the web, use
+BasePage.scroll_into_view() / scroll_to_bottom() - Playwright also scrolls
+automatically before clicking or typing.
+"""
 
 
 class ScrollUtil:
