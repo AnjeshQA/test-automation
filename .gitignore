@@ -6,16 +6,19 @@
 # --- Python ---
 __pycache__/
 *.py[cod]
+*$py.class
 *.egg-info/
 .venv/
 venv/
 env/
+ENV/
 .pytest_cache/
 
 # --- IDE / editor / OS ---
 .idea/
 .vscode/
 *.iml
+*.swp
 .DS_Store
 Thumbs.db
 .ai/
@@ -23,26 +26,31 @@ Thumbs.db
 # --- Secrets / local environment (keep credentials out of git) ---
 .env
 .env.*
+Utilities/config.ini.local
 
 # --- Test output (recreated on every run; CI publishes it as build artifacts) ---
 # Allure raw results and generated HTML reports
 allure-results/
 allure-report/
 Reports/
-reports/
 # Playwright screenshots / traces / videos on failure
 test-results/
 playwright-report/
 # Old ad-hoc failure screenshots
 failed_test_screenshot*.png
+
+# --- Data files (avoid uploading local data) ---
 *.csv
+*.xls
+*.xlsx
+*.xlxs
+
+# --- Excel lock files (created while testdata.xlsx is open) ---
+~$*.xlsx
 
 # --- Logs ---
 Logs/
 .Logs/
 *.log
-# Old Windows-style log paths (".\Logs\log<date>.txt") created on Mac/Linux
-*\\Logs\\*
-
-# --- Excel lock files (created while testdata.xlsx is open) ---
-~$*.xlsx
+# Windows-style log paths (".\Logs\log<date>.txt") created on Mac/Linux
+**/Logs/
