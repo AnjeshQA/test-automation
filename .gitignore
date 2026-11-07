@@ -23,6 +23,7 @@ Thumbs.db
 # --- Secrets / local environment (keep credentials out of git) ---
 .env
 .env.*
+!.env.example
 
 # --- Test output (recreated on every run; CI publishes it as build artifacts) ---
 # Allure raw results and generated HTML reports

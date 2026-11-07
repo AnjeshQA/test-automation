@@ -120,6 +120,9 @@ Always run from the `NEETprep_Web_Test_Automation` folder.
 | Run everything (headless Chromium) | `pytest` |
 | Watch the browser | `pytest --headed` |
 | Slow down to watch each step | `pytest --headed --slowmo 500` |
+| Always watch the browser (local only) | `cp .env.example .env`, then set `HEADED=1` (and `SLOWMO=500`) in `.env` |
+| Back to headless | set `HEADED=0` in `.env` (or comment the line out) |
+| Force headless once while `.env` has `HEADED=1` | `HEADED=0 pytest` |
 | Another browser | `pytest --browser firefox` or `--browser webkit` |
 | Several browsers | `pytest --browser chromium --browser firefox` |
 | One file | `pytest TestCases/test_login_bdd.py` |

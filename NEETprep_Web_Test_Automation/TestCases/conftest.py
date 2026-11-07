@@ -4,6 +4,7 @@ conftest.py - shared pytest fixtures and hooks for every test in TestCases/.
 pytest loads this file automatically; tests never import it.
 
 What it provides:
+    browser_type_launch_args -> headed/headless switch from HEADED / SLOWMO in .env
     browser_context_args -> browser window settings (viewport) for every test
     page                 -> the Playwright page every test/step uses (with central timeouts)
     setup                -> gives class-based tests (BaseTest) access to the page as self.page
@@ -13,14 +14,41 @@ Where the browser comes from:
     The pytest-playwright plugin creates browser -> context -> page for each test and
     closes them afterwards (fresh, independent session per test). Choose it on the CLI:
         --browser chromium|firefox|webkit   --headed   (headless is the default)
+    Or set HEADED=1 in a local .env file (see .env.example) to always show the browser.
     Screenshots/traces on failure are configured in pytest.ini (--screenshot / --tracing).
 """
+import os
+
 import pytest
 import allure
 from Utilities import configReader
 
+# Load the local .env file (gitignored) into environment variables, e.g. HEADED=1.
+# Values already set in the shell win over .env (HEADED=0 pytest ... forces headless).
+# If python-dotenv is not installed, skip it - HEADED can still be set in the shell.
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # Browser, headed/headless, screenshots and traces come from pytest-playwright CLI options:
 #   --browser chromium|firefox|webkit   --headed   --screenshot / --tracing (defaults set in pytest.ini)
+
+
+@pytest.fixture(scope="session")
+def browser_type_launch_args(browser_type_launch_args):
+    """
+    Headed/headless switch. Overrides pytest-playwright's browser launch options.
+        HEADED=1  -> show the browser window (SLOWMO=<ms> optionally pauses between actions)
+        anything else / not set -> unchanged: headless, unless --headed is passed on the CLI
+    CI has no .env, so Jenkins / GitHub Actions always stay headless.
+    """
+    if os.getenv("HEADED") == "1":
+        return {**browser_type_launch_args,
+                "headless": False,
+                "slow_mo": float(os.getenv("SLOWMO", "0"))}
+    return browser_type_launch_args
 
 
 @pytest.fixture(scope="session")
