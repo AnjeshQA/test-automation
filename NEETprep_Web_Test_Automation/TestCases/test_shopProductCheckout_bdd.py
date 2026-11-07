@@ -25,7 +25,7 @@ def verify_page_load(page):
     assert "shop.neetprep.com" in page.url
 
 
-@when('I search for "HYTS HOME TEST SERIES LATEST EDITION" NEETprep produc
+@when('I search for "HYTS HOME TEST SERIES LATEST EDITION" NEETprep product')
 def search_product_step(page):
     # Fetch product name from [common info] in conf.ini
     product = configReader.readConfig("common info", "product_name")

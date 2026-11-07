@@ -40,10 +40,8 @@ playwright-report/
 failed_test_screenshot*.png
 
 # --- Data files (avoid uploading local data) ---
+# Excel test data (Excel/testdata.xlsx) is NOT ignored: the tests need it in the repo.
 *.csv
-*.xls
-*.xlsx
-*.xlxs
 
 # --- Excel lock files (created while testdata.xlsx is open) ---
 ~$*.xlsx
