@@ -9,3 +9,6 @@ allure-results/
 .pytest_cache/
 __pycache__/
 *.pyc
+# Playwright / pytest-html output
+test-results/
+reports/

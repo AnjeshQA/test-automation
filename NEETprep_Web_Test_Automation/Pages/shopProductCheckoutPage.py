@@ -1,8 +1,8 @@
 from Pages.BasePage import BasePage
 
 class shopProductCheckout(BasePage):
-    def __init__(self, driver):
-        super().__init__(driver)
+    def __init__(self, page):
+        super().__init__(page)
 
     def search_product(self, product_name):
         self.click("shop_click_searchBox_CSS")

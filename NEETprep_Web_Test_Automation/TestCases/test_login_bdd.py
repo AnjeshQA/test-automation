@@ -1,24 +1,23 @@
 import pytest
 from pytest_bdd import scenarios, given, when, then
 
-import configReader
+from Utilities import configReader
 from Pages.loginPage import LoginPage
 from Utilities import dataProvider
 
 scenarios('../features/login.feature')
 
 @given('the user is on the NEETprep login page')
-def verify_page_load(driver):
+def verify_page_load(page):
     url = configReader.readConfig("common info", "url")
 
-    # 2. Tell the driver to go there (since conftest no longer does it)
-    driver.get(url)
-    # conftest.py already navigated to the URL
-    assert "neetprep.com" in driver.current_url
+    # Navigate to the site (conftest does not do it)
+    page.goto(url, wait_until="domcontentloaded")
+    assert "neetprep.com" in page.url
 
 
 @when('the user logs in with valid credentials')
-def login_step(driver):
+def login_step(page):
     # CHANGED: 'LoginTest' -> 'UserDetail' to match your Excel file
     data = dataProvider.get_data("UserDetail")
 
@@ -28,11 +27,11 @@ def login_step(driver):
 
     mobile, otp = data[0][0], data[0][1]
 
-    login = LoginPage(driver)
+    login = LoginPage(page)
     login.login_with_otp(mobile, otp)
 
 @then('the user should be redirected to the home page')
-def verify_dashboard(driver):
+def verify_dashboard(page):
     from Pages.HomePage import HomePage
-    home = HomePage(driver)
+    home = HomePage(page)
     assert home.is_dashboard_visible(), "User was not redirected to Dashboard!"

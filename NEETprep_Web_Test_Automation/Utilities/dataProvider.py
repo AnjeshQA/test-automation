@@ -9,9 +9,9 @@ def get_data(sheetName):
     """
     # 1. Construct the path to your excel file
     # This assumes your folder structure is ProjectRoot/Utilities/dataProvider.py
-    # and ProjectRoot/excel/testdata.xlsx
+    # and ProjectRoot/Excel/testdata.xlsx (folder name is case-sensitive on Linux)
     base_path = os.path.dirname(os.path.abspath(__file__))
-    excel_path = os.path.join(base_path, "..", "excel", "testdata.xlsx")
+    excel_path = os.path.join(base_path, "..", "Excel", "testdata.xlsx")
 
     try:
         workbook = openpyxl.load_workbook(excel_path)
@@ -44,4 +44,4 @@ def get_data(sheetName):
         if data_list:
             main_list.append(tuple(data_list))
 
-    return main_list
+    return main_list

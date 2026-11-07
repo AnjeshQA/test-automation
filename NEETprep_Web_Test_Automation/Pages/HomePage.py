@@ -3,19 +3,18 @@ from Pages.dailyDppPage import dailyDppScreen
 
 
 class HomePage(BasePage):
-    def __init__(self,driver):
-        super().__init__(driver)
+    def __init__(self, page):
+        super().__init__(page)
 
     def gotoDailyDpp(self):
         self.click("dailyDpp_XPATH")
-        return dailyDppScreen(self.driver)
+        return dailyDppScreen(self.page)
 
     def gotoLogout(self):
-        self.click("drawerMenu_XPATH")
-
-        self.click("logoutButton_ID")
-
-        self.click("logoutConfirmation_ID")
+        # Desktop header shows Logout directly; there is no drawer menu or confirmation dialog (Nov 2026)
+        self.click("logoutButton_XPATH")
+        # Logged out once the landing-page Login/Register link is back
+        self.get_element("landingPage_loginButton_XPATH")
 
     def is_dashboard_visible(self):
         # Gold standard: Check for a unique element on the dashboard

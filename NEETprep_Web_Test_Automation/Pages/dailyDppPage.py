@@ -1,8 +1,8 @@
 from Pages.BasePage import BasePage
 
 class dailyDppScreen(BasePage):
-    def __init__(self,driver):
-        super().__init__(driver)
+    def __init__(self, page):
+        super().__init__(page)
 
     def dailyDpp(self):
         #start test and go to question page

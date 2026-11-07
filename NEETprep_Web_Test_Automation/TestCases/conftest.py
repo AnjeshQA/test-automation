@@ -1,26 +1,31 @@
 import pytest
 import allure
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
 from Utilities import configReader
 
+# Browser, headed/headless, screenshots and traces come from pytest-playwright CLI options:
+#   --browser chromium|firefox|webkit   --headed   --screenshot / --tracing (defaults set in pytest.ini)
 
-@pytest.fixture(scope="function")
-def driver():
-    options = webdriver.ChromeOptions()
-    options.page_load_strategy = 'eager'  # Start as soon as DOM is ready
 
-    service = ChromeService(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
+@pytest.fixture(scope="session")
+def browser_context_args(browser_context_args):
+    # Large desktop viewport so the desktop header (and search icon) is visible
+    return {**browser_context_args, "viewport": {"width": 1920, "height": 1080}}
 
-    # Force a large window size to ensure the desktop header (and search icon) is visible
-    driver.set_window_size(1920, 1080)
-    driver.maximize_window()
-    driver.implicitly_wait(10)
 
-    yield driver
-    driver.quit()
+@pytest.fixture
+def page(page):
+    """pytest-playwright's page with the framework's central timeouts applied (see [playwright] in conf.ini)."""
+    page.set_default_timeout(float(configReader.readConfig("playwright", "default_timeout_ms")))
+    page.set_default_navigation_timeout(float(configReader.readConfig("playwright", "navigation_timeout_ms")))
+    return page
+
+
+@pytest.fixture
+def setup(request, page):
+    """Used by BaseTest: exposes the Playwright page to class-based tests as self.page."""
+    if request.cls is not None:
+        request.cls.page = page
+    yield page
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -31,13 +36,13 @@ def pytest_runtest_makereport(item, call):
 
 
 @pytest.fixture(autouse=True)  # Set to autouse so it always monitors
-def log_on_failure(request, driver):
+def log_on_failure(request, page):
     """
     Captures screenshots on failure and attaches them to the Allure report.
     """
     yield
     item = request.node
     if hasattr(item, "rep_call") and item.rep_call.failed:
-        allure.attach(driver.get_screenshot_as_png(),
+        allure.attach(page.screenshot(full_page=True),
                       name="failure_screenshot",
                       attachment_type=allure.attachment_type.PNG)

@@ -8,8 +8,8 @@ class LoginPage(BasePage):
     Logic is decoupled from locators to ensure easy maintenance.
     """
 
-    def __init__(self, driver):
-        super().__init__(driver)
+    def __init__(self, page):
+        super().__init__(page)
 
     def login_with_otp(self, mobile_number, otp):
         """Standard login flow for valid credentials."""
@@ -22,7 +22,7 @@ class LoginPage(BasePage):
         self.type("login_enterOTP_XPATH", otp)
         self.scroll_into_view("login_verifyOTP_XPATH")
         self.click("login_verifyOTP_XPATH")
-        return HomePage(self.driver)
+        return HomePage(self.page)
 
     def login_with_invalid_otp(self, mobile_number, otp):
         """Negative test flow verifying error message visibility."""
