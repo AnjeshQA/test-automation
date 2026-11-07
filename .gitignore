@@ -24,7 +24,7 @@ Thumbs.db
 .env
 .env.*
 
-# --- Test output (recreated on every run) ---
+# --- Test output (recreated on every run; CI publishes it as build artifacts) ---
 # Allure raw results and generated HTML reports
 allure-results/
 allure-report/

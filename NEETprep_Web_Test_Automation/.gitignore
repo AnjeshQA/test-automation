@@ -1,14 +1,25 @@
-.idea/
+# Framework-level ignores. The main list is in the repo-root .gitignore.
+#
+# Test reports are NOT committed: every local or CI run (Jenkinsfile, GitHub Actions)
+# creates them fresh, and CI publishes them as build artifacts.
+# Everything needed to RUN the tests (code, conf.ini, Excel/testdata.xlsx, requirements.txt,
+# pytest.ini, features/) stays tracked.
+
+# Python
 .venv/
-.DS_Store
-__pycache__/
-*.csv
-Logs/
-.Logs/
-allure-results/
-.pytest_cache/
 __pycache__/
 *.pyc
-# Playwright / pytest-html output
-test-results/
+.pytest_cache/
+
+# IDE / OS
+.idea/
+.DS_Store
+
+# Generated reports and output
+allure-results/
+allure-report/
 reports/
+test-results/
+Logs/
+.Logs/
+*.csv

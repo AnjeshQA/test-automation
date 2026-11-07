@@ -76,15 +76,19 @@ the tests.
 | `Utilities/scroll_util.py` | Old mobile (Appium) swipe helpers. Not used by web tests |
 | `pytest.ini` | pytest settings: Allure output, screenshots/traces on failure, logging, timeout |
 | `requirements.txt` | Python dependencies |
-| `jenkins_run.sh` | CI script used by Jenkins |
+| `jenkins_run.sh` | Shell script for a Jenkins *freestyle* job |
+| `../Jenkinsfile` (repo root) | Jenkins *pipeline*: setup, tests, report publishing (section 6) |
+| `../.github/workflows/playwright-tests.yml` | GitHub Actions workflow: runs tests on push or PR and uploads reports (section 6) |
+| `.gitignore` (here and at the repo root) | Keeps generated reports, logs, venv, IDE and OS files out of git |
 
-**Generated folders** (git-ignored, recreated on every run):
+**Generated folders** are git-ignored and recreated on every run. Don't commit them: CI builds fresh reports
+and attaches them to each build:
 
 | Folder | Content |
 |---|---|
 | `test-results/` | Screenshot and `trace.zip` for each failed test |
 | `allure-results/` | Raw data for the Allure report |
-| `reports/` | pytest-html report, when run with `--html` |
+| `reports/` | `report.html` (pytest-html) and `junit.xml`. CI always creates both; locally only with `--html` / `--junitxml` |
 | `Logs/` | Daily framework log files |
 
 ---
@@ -193,31 +197,71 @@ users' credentials in the repo. Use the test account only.
 
 ---
 
-## 6. Jenkins
+## 6. CI/CD: Jenkins and GitHub Actions
 
-The Jenkins job's **Execute shell** step:
+Tests always run **headless** in CI. Every run produces:
+
+| Report | File / folder | What it is |
+|---|---|---|
+| HTML report | `reports/report.html` | Single-file pytest-html report, opens in any browser |
+| JUnit XML | `reports/junit.xml` | Pass/fail per test. Jenkins and GitHub use it for result tables |
+| Allure data | `allure-results/` | Input for the Allure report |
+| Traces and screenshots | `test-results/` | Only for failed tests. Open with `playwright show-trace <trace.zip>` |
+| Logs | `Logs/` | Framework log file |
+
+### Jenkins: pipeline (recommended)
+The pipeline is defined in `Jenkinsfile` at the **repo root**.
+
+1. Jenkins → **New Item** → **Pipeline** (or **Multibranch Pipeline** to build every branch).
+2. **Pipeline** → *Pipeline script from SCM* → Git → `https://github.com/GoodEd/test-automation.git`,
+   branch `*/master` (or `*/playwright-framework` until it's merged), Script Path `Jenkinsfile`.
+3. **Build with Parameters**:
+
+| Parameter | Default | Meaning |
+|---|---|---|
+| `BROWSER` | `chromium` | `chromium`, `firefox` or `webkit` |
+| `TEST_PATH` | `TestCases` | Which tests to run |
+| `PYTEST_ARGS` | *(empty)* | Extra options, e.g. `-k login` or `-m sanity` |
+| `INSTALL_BROWSER_DEPS` | `false` | Linux agents only: install browser system libraries (needs sudo) |
+
+**Build result:** **SUCCESS** means all tests passed. **UNSTABLE** (yellow) means some tests
+failed, and the reports are still published. **FAILURE** means setup broke or pytest couldn't run.
+
+**On the build page:**
+- **Test Result** with a trend graph. Built in, no plugin needed.
+- **Build Artifacts** with every file listed above. Built in.
+- **Playwright HTML Report** link, if the *HTML Publisher* plugin is installed.
+- **Allure Report** link, if the *Allure* plugin is installed and the Allure commandline is set up
+  under *Manage Jenkins → Tools*.
+
+If an optional plugin is missing, the pipeline doesn't fail. It skips that link and logs a message.
+
+> Jenkins blocks JavaScript in published HTML by default (Content Security Policy). If the HTML
+> report looks unstyled in Jenkins, download it from **Build Artifacts** instead.
+
+### Jenkins: freestyle job (old way)
+A freestyle job can still use `jenkins_run.sh`. Its **Execute shell** step:
 ```bash
 cd NEETprep_Web_Test_Automation
-chmod +x jenkins_run.sh && ./jenkins_run.sh
+./jenkins_run.sh
 ```
-The script:
-1. updates the code
-2. creates or activates `.venv`
-3. installs `requirements.txt`
-4. installs the Playwright browser
-5. runs pytest **headless** with Allure and HTML reports
+The script supports the same settings as environment variables (`GIT_BRANCH_TO_TEST`, `TEST_PATH`,
+`BROWSER`). Its default `TEST_PATH` is `TestCases/test_loginpage.py`. Add a post-build step
+**Archive the artifacts**: `NEETprep_Web_Test_Automation/reports/**, NEETprep_Web_Test_Automation/allure-results/**, NEETprep_Web_Test_Automation/test-results/**`.
 
-Optional job parameters or environment variables:
+### GitHub Actions
+The workflow is defined in `.github/workflows/playwright-tests.yml`. You don't need to set anything up.
 
-| Variable | Default | Meaning |
-|---|---|---|
-| `GIT_BRANCH_TO_TEST` | `master` | Branch to test |
-| `TEST_PATH` | `TestCases/test_loginpage.py` | Tests to run, e.g. `TestCases` for all |
-| `BROWSER` | `chromium` | `chromium`, `firefox` or `webkit` |
+- **Runs automatically** on every push to `master` or `playwright-framework`, and on every PR into `master`.
+- **Run manually:** GitHub → **Actions** → *Playwright Tests* → **Run workflow**, then choose the browser and tests.
+- **Results:** open the run.
+  - **Summary** shows a pass/fail table and lists the failed tests.
+  - **Artifacts** has `html-report-*`, `allure-results-*`, and `playwright-traces-*` (only when tests fail).
+    Artifacts are kept for 14 days.
+- A PR shows a ✅ or ❌ check, so broken tests are visible before merging.
 
-**Post-build → Archive artifacts:** `allure-results/**, reports/**, test-results/**, Logs/**`
-(prefix with `NEETprep_Web_Test_Automation/` if the job runs from the repo root).
-On a Linux agent, change the browser install line to `python -m playwright install --with-deps "$BROWSER"`.
+> Every CI run logs in to the live site with the test account from `Excel/testdata.xlsx`.
+> Runs on the same branch are queued, so two runs never use the account at the same time.
 
 ---
 
