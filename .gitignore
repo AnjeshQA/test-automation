@@ -1,34 +1,56 @@
-# --- Python Environment & Cache ---
-.venv/
-venv/
-ENV/
+# =============================================================================
+# Files that must never be committed (generated, machine-specific or secret).
+# Applies to the whole repo, including NEETprep_Web_Test_Automation/.
+# =============================================================================
+
+# --- Python ---
 __pycache__/
 *.py[cod]
 *$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
 
-# --- MacOS System Files ---
-.DS_Store
-
-# --- IDEs (PyCharm / Aqua / VS Code) ---
+# --- IDE / editor / OS ---
 .idea/
 .vscode/
-*.swp
 *.iml
+*.swp
+.DS_Store
+Thumbs.db
+.ai/
 
-# --- Test Reports & Logs ---
+# --- Secrets / local environment (keep credentials out of git) ---
+.env
+.env.*
+Utilities/config.ini.local
+
+# --- Test output (recreated on every run; CI publishes it as build artifacts) ---
+# Allure raw results and generated HTML reports
 allure-results/
 allure-report/
 Reports/
-Logs/
-.Logs/
-*.log
+# Playwright screenshots / traces / videos on failure
+test-results/
+playwright-report/
+# Old ad-hoc failure screenshots
+failed_test_screenshot*.png
 
-# --- Data Files (Avoid uploading local data) ---
+# --- Data files (avoid uploading local data) ---
 *.csv
 *.xls
 *.xlsx
 *.xlxs
 
-# --- Local Secrets ---
-.env
-Utilities/config.ini.local
+# --- Excel lock files (created while testdata.xlsx is open) ---
+~$*.xlsx
+
+# --- Logs ---
+Logs/
+.Logs/
+*.log
+# Windows-style log paths (".\Logs\log<date>.txt") created on Mac/Linux
+**/Logs/

@@ -1,0 +1,140 @@
+# =============================================================================
+# GitHub Actions - runs the NEETprep Playwright tests and uploads the reports.
+#
+# When it runs:
+#   - on every push to master or playwright-framework
+#   - on every pull request into master
+#   - manually: GitHub -> Actions -> "Playwright Tests" -> Run workflow (choose browser/tests)
+#
+# Where to find the results:
+#   Actions -> pick the run -> "Summary" (pass/fail counts) and "Artifacts" (download the
+#   HTML report, Allure results and Playwright traces).
+# =============================================================================
+name: Playwright Tests
+
+on:
+  push:
+    branches: [master, playwright-framework]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: Browser to run the tests in
+        type: choice
+        options: [chromium, firefox, webkit]
+        default: chromium
+      test_path:
+        description: Tests to run (e.g. TestCases or TestCases/test_login_bdd.py)
+        type: string
+        default: TestCases
+
+# Only one run at a time per branch; a new push cancels the older run.
+# (All runs share the same NEETprep test account.)
+concurrency:
+  group: playwright-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    # All "run" steps execute inside the framework folder
+    defaults:
+      run:
+        working-directory: NEETprep_Web_Test_Automation
+
+    env:
+      # Manual runs use the chosen inputs; push / PR runs use the defaults
+      BROWSER: ${{ inputs.browser || 'chromium' }}
+      TEST_PATH: ${{ inputs.test_path || 'TestCases' }}
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      # 1. Get the code
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # 2. Python, with pip download cache keyed on requirements.txt
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: NEETprep_Web_Test_Automation/requirements.txt
+
+      # 3. Framework dependencies (pytest, pytest-bdd, playwright, allure, ...)
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4. Browser + the Linux system libraries it needs
+      - name: Install Playwright browser
+        run: python -m playwright install --with-deps "$BROWSER"
+
+      # 5. Run the tests headless (the default). continue-on-error is NOT used:
+      #    a failed test fails the run, and the upload steps below still run (if: always()).
+      - name: Run tests
+        run: |
+          python -m pytest "$TEST_PATH" --browser "$BROWSER" \
+            --alluredir=allure-results \
+            --html=reports/report.html --self-contained-html \
+            --junitxml=reports/junit.xml
+
+      # 6. Pass/fail table on the run's Summary page (no extra actions needed)
+      - name: Write test summary
+        if: always()
+        run: |
+          python - <<'EOF'
+          import os, xml.etree.ElementTree as ET
+          path = "reports/junit.xml"
+          out = open(os.environ["GITHUB_STEP_SUMMARY"], "a")
+          if not os.path.exists(path):
+              out.write("## Playwright Tests\nNo test results - the run failed before pytest finished.\n")
+          else:
+              root = ET.parse(path).getroot()
+              suites = [root] if root.tag == "testsuite" else list(root)
+              t = {k: sum(int(s.get(k, 0)) for s in suites) for k in ("tests", "failures", "errors", "skipped")}
+              passed = t["tests"] - t["failures"] - t["errors"] - t["skipped"]
+              out.write(f"## Playwright Tests ({os.environ['BROWSER']})\n\n")
+              out.write("| Passed | Failed | Errors | Skipped | Total |\n|---|---|---|---|---|\n")
+              out.write(f"| {passed} | {t['failures']} | {t['errors']} | {t['skipped']} | {t['tests']} |\n\n")
+              for s in suites:
+                  for case in s.iter("testcase"):
+                      if case.find("failure") is not None or case.find("error") is not None:
+                          out.write(f"- ❌ `{case.get('classname')}::{case.get('name')}`\n")
+              out.write("\nDownload the HTML report and traces from **Artifacts** below.\n")
+          EOF
+
+      # 7. Reports (kept for 14 days)
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report-${{ env.BROWSER }}
+          path: NEETprep_Web_Test_Automation/reports/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ env.BROWSER }}
+          path: NEETprep_Web_Test_Automation/allure-results/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      # Screenshots + trace.zip of failed tests (open with: playwright show-trace trace.zip)
+      - name: Upload Playwright traces (failures only)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces-${{ env.BROWSER }}
+          path: |
+            NEETprep_Web_Test_Automation/test-results/
+            NEETprep_Web_Test_Automation/Logs/
+          retention-days: 14
+          if-no-files-found: ignore

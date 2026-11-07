@@ -1,5 +1,0 @@
-2026-03-09 14:44:53,086 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> shop_click_searchBox_CSS
-2026-03-09 14:44:53,381 - BasePage.py:[53] - [INFO] - Step: Typing 'HYTS HOME TEST SERIES LATEST EDITION' into -> shop_inputSearchBox_XPATH
-2026-03-09 14:44:53,956 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> click_HYTS_SearchResults_XPATH
-2026-03-09 14:44:55,390 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> shop_addToCart_XPATH
-2026-03-09 14:44:55,815 - BasePage.py:[60] - [INFO] - Step: Clicking on Element -> shop_checkout_XPATH

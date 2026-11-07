@@ -1,2 +1,0 @@
-2026-02-11 01:03:51,565 - BasePage.py:[56] - [INFO] - Step: Typing '9000000000' into -> mobile_number_ID
-2026-02-11 01:03:52,137 - BasePage.py:[56] - [INFO] - Step: Typing '876302' into -> mobile_number_ID
