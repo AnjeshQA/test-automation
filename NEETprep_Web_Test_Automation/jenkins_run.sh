@@ -12,7 +12,7 @@ set -e
 
 # Optional Jenkins parameters / environment variables (defaults keep the old behaviour)
 GIT_BRANCH_TO_TEST="${GIT_BRANCH_TO_TEST:-master}"   # repo has no 'main' branch
-TEST_PATH="${TEST_PATH:-TestCases/test_loginpage.py}"
+TEST_PATH="${TEST_PATH:-TestCases/test_login_bdd.py}"
 BROWSER="${BROWSER:-chromium}"                        # chromium | firefox | webkit
 
 # 2. Git Integration (discard local changes and match the remote branch)
