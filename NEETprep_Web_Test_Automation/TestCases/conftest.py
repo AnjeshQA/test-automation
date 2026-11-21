@@ -8,6 +8,10 @@ What it provides:
     browser_context_args -> browser window settings (viewport) for every test
     page                 -> the Playwright page every test/step uses (with central timeouts)
     setup                -> gives class-based tests (BaseTest) access to the page as self.page
+    valid_user / invalid_user -> login test data from Excel/testdata.xlsx
+    logged_in_home_page  -> opens the site, logs in, returns the HomePage (reuse in any test)
+    shared BDD steps     -> "the user is on the NEETprep login page"
+                            "the user is logged in to the NEETprep platform"
     log_on_failure       -> attaches a screenshot to the Allure report when a test fails
 
 Where the browser comes from:
@@ -21,7 +25,19 @@ import os
 
 import pytest
 import allure
-from Utilities import configReader
+from pytest_bdd import given
+
+from Pages.loginPage import LoginPage
+from Utilities import configReader, dataProvider
+
+# Load the local .env file (gitignored) into environment variables, e.g. HEADED=1.
+# Values already set in the shell win over .env (HEADED=0 pytest ... forces headless).
+# If python-dotenv is not installed, skip it - HEADED can still be set in the shell.
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 # Load the local .env file (gitignored) into environment variables, e.g. HEADED=1.
 # Values already set in the shell win over .env (HEADED=0 pytest ... forces headless).
@@ -76,6 +92,69 @@ def setup(request, page):
         request.cls.page = page
     # Hand the page to the test; pytest-playwright closes it after the test
     yield page
+
+
+# =============================================================================
+# Shared login: test data, login fixture and shared BDD steps
+#
+# Write the login once here and reuse it in every test that needs a logged-in user
+# (download PDF, custom practice, Daily DPP ...), instead of repeating the login steps.
+#
+#   BDD feature file  -> use the shared step text:
+#       Background:
+#         Given the user is logged in to the NEETprep platform
+#     The step returns the HomePage, so later steps can take `home_page` as an argument.
+#
+#   Plain pytest test -> ask for the fixture:
+#       def test_something(logged_in_home_page): ...
+#
+# pytest-bdd steps defined in conftest.py are available to every test_*_bdd.py file.
+# =============================================================================
+def _first_row(sheet_name):
+    """Return (mobile, otp) from the first data row of an Excel sheet, or fail with a clear message."""
+    data = dataProvider.get_data(sheet_name)
+    if not data:
+        pytest.fail(f"Excel sheet '{sheet_name}' is empty or could not be read!")
+    # Column A = mobile number, column B = OTP
+    return data[0][0], data[0][1]
+
+
+@pytest.fixture
+def valid_user():
+    """Valid mobile number + correct OTP (Excel sheet UserDetail)."""
+    return _first_row("UserDetail")
+
+
+@pytest.fixture
+def invalid_user():
+    """Valid mobile number + wrong OTP (Excel sheet InvalidCred)."""
+    return _first_row("InvalidCred")
+
+
+@pytest.fixture
+def logged_in_home_page(page, valid_user):
+    """
+    Opens the site, logs in with the valid test account and returns the HomePage (dashboard).
+    Fails in setup (before the test body runs) if the dashboard does not load.
+    """
+    mobile, otp = valid_user
+    home = LoginPage(page).open().login_with_otp(mobile, otp)
+    assert home.is_dashboard_visible(), "Login precondition failed: dashboard not shown!"
+    return home
+
+
+@given('the user is on the NEETprep login page', target_fixture="login_page")
+def open_login_page(page):
+    """Shared step: open the landing page. Later steps get it as the `login_page` argument."""
+    login = LoginPage(page).open()
+    assert "neetprep.com" in page.url, f"Expected a neetprep.com URL, got {page.url}"
+    return login
+
+
+@given('the user is logged in to the NEETprep platform', target_fixture="home_page")
+def user_is_logged_in(logged_in_home_page):
+    """Shared step: logged-in user on the dashboard. Later steps get it as `home_page`."""
+    return logged_in_home_page
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)

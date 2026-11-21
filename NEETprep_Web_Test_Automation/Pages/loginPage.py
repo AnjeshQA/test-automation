@@ -2,8 +2,8 @@
 LoginPage - Page Object for the NEETprep landing page + OTP login form (https://www.neetprep.com).
 
 Used by:
-    TestCases/test_login_bdd.py   (BDD scenario "Successful login via OTP")
-    TestCases/test_loginpage.py   (valid / invalid login tests)
+    TestCases/conftest.py         (shared login fixture + shared Given steps for every feature)
+    TestCases/test_login_bdd.py   (login, logout and invalid-OTP scenarios)
 
 Flow:
     landing page -> close popup -> Login/Register -> mobile number -> accept T&C
@@ -15,6 +15,7 @@ Next step after login:
 """
 from Pages.BasePage import BasePage
 from Pages.HomePage import HomePage
+from Utilities import configReader
 
 
 class LoginPage(BasePage):
@@ -26,6 +27,12 @@ class LoginPage(BasePage):
     def __init__(self, page):
         # Pass the Playwright page up to BasePage (stored as self.page)
         super().__init__(page)
+
+    def open(self):
+        """Open the NEETprep landing page (URL from conf.ini [common info] url)."""
+        # "domcontentloaded" = continue as soon as the HTML is parsed (like Selenium's 'eager')
+        self.page.goto(configReader.readConfig("common info", "url"), wait_until="domcontentloaded")
+        return self
 
     def login_with_otp(self, mobile_number, otp):
         """Standard login flow for valid credentials."""
@@ -57,3 +64,13 @@ class LoginPage(BasePage):
         assert is_error, "FAILED: 'Invalid OTP' error message was NOT visible!"
         # Stay on the login page object (user is not logged in)
         return self
+
+    # --- Checks: return True/False only; the test (Then step) does the assert ---
+
+    def is_invalid_otp_error_displayed(self):
+        """True if the 'Invalid OTP. Please try again.' message is visible."""
+        return self.is_element_displayed("invalid_OTP_error_message_XPATH")
+
+    def is_login_link_visible(self):
+        """True if the header's Login/Register link is visible (i.e. the user is logged out)."""
+        return self.is_element_displayed("landingPage_loginButton_XPATH")

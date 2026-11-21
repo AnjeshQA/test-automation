@@ -1,5 +1,5 @@
 """
-BaseTest - parent class for class-based (non-BDD) tests, e.g. test_loginpage.py.
+BaseTest - parent class for class-based (non-BDD) tests, e.g. test_neetprep_end2end.py.
 
 Purpose:
     Inherit from it and every test method automatically gets:

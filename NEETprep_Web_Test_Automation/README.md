@@ -29,7 +29,7 @@ Playwright                  Drives the real browser (Chromium / Firefox / WebKit
 **Example: what happens when the login scenario runs**
 1. `features/login.feature` says *"When the user logs in with valid credentials"*.
 2. pytest-bdd finds the step with that exact text in `TestCases/test_login_bdd.py`.
-3. The step reads the mobile number and OTP from `Excel/testdata.xlsx` (sheet `UserDetail`).
+3. The step gets the mobile number and OTP from the `valid_user` fixture in `conftest.py`, which reads `Excel/testdata.xlsx` (sheet `UserDetail`).
 4. It calls `LoginPage(page).login_with_otp(mobile, otp)`.
 5. `LoginPage` calls `BasePage.click("login_sendOTP_button_XPATH")` and similar.
 6. `BasePage` looks up that key in `conf.ini` and asks Playwright to click it. Playwright waits
@@ -54,13 +54,12 @@ the tests.
 
 | Path | Purpose |
 |---|---|
-| `features/login.feature` | BDD scenario: log in via OTP |
+| `features/login.feature` | BDD scenarios: log in via OTP, log out, wrong OTP shows an error |
 | `features/shopProductCheckout.feature` | BDD scenario: search a shop product, add to cart, reach checkout |
-| `TestCases/conftest.py` | Shared fixtures: `page` (with timeouts), viewport, `setup` for class tests, Allure screenshot on failure |
+| `TestCases/conftest.py` | Shared fixtures: `page` (with timeouts), viewport, `setup` for class tests, Allure screenshot on failure. Shared login: `valid_user` / `invalid_user` test data, `logged_in_home_page` fixture, and the shared BDD steps *"the user is on the NEETprep login page"* and *"the user is logged in to the NEETprep platform"* (see section 5) |
 | `TestCases/BaseTest.py` | Parent class for class-based tests: gives `self.page`, failure screenshot, 1 automatic re-run |
 | `TestCases/test_login_bdd.py` | Step definitions for `login.feature` |
 | `TestCases/test_shopProductCheckout_bdd.py` | Step definitions for `shopProductCheckout.feature` |
-| `TestCases/test_loginpage.py` | Data-driven login tests: valid login + logout, and invalid OTP |
 | `TestCases/test_neetprep_end2end.py` | Login → Daily DPP flow. **Skipped**: its locators aren't defined yet |
 | `Pages/BasePage.py` | Parent of all Page Objects. Turns `conf.ini` keys into Playwright locators |
 | `Pages/loginPage.py` | Landing page and OTP login form |
@@ -126,10 +125,11 @@ Always run from the `NEETprep_Web_Test_Automation` folder.
 | Another browser | `pytest --browser firefox` or `--browser webkit` |
 | Several browsers | `pytest --browser chromium --browser firefox` |
 | One file | `pytest TestCases/test_login_bdd.py` |
-| One test | `pytest -k test_invalid_login` |
+| One test | `pytest -k test_login_fails_with_an_invalid_otp` |
+| By tag (from the feature file) | `pytest -m sanity`, `pytest -m negative`, `pytest -m login` |
 | Only collect (no browser) | `pytest --collect-only` |
 | HTML report | `pytest --html=reports/report.html --self-contained-html` |
-| Pause and debug with Playwright Inspector | `PWDEBUG=1 pytest -k test_valid_login` |
+| Pause and debug with Playwright Inspector | `PWDEBUG=1 pytest -k test_successful_login_via_otp` |
 
 ### Reports and debugging failures
 - **Trace (best tool):** `playwright show-trace test-results/<test-name>/trace.zip`
@@ -179,11 +179,31 @@ class CustomPracticePage(BasePage):
 from pytest_bdd import scenarios, given, when, then
 scenarios('../features/<name>.feature')
 
-@given('the user is on the NEETprep login page')
-def open_site(page):
-    page.goto("https://www.neetprep.com")
+@when('the user clicks on the "Download PDF" button')
+def click_download(home_page):
+    ...
 ```
 The step text must match the feature file **exactly**. Steps get the browser through the `page` argument.
+
+### A test that needs a logged-in user (don't repeat the login steps)
+The login is written once in `TestCases/conftest.py`. Reuse it instead of copying the login steps:
+
+- **BDD:** start the feature with the shared step. It opens the site, logs in with the
+  `UserDetail` account, checks the dashboard, and passes the `HomePage` on as `home_page`:
+  ```gherkin
+  Background:
+    Given the user is logged in to the NEETprep platform
+  ```
+  Then any step can use it: `def my_step(home_page): ...`
+- **Plain pytest test:** ask for the fixture:
+  ```python
+  def test_something(logged_in_home_page):
+      logged_in_home_page.gotoLogout()
+  ```
+- Need only the landing page (not logged in)? Use `Given the user is on the NEETprep login page`,
+  which passes `LoginPage` on as `login_page`.
+
+Don't define these two step texts again in a `test_*_bdd.py` file.
 
 ### A new class-based, data-driven test
 ```python
@@ -192,7 +212,8 @@ class Test_Something(BaseTest):
     def test_x(self, mobileNumber, otp):
         LoginPage(self.page).login_with_otp(mobileNumber, otp)
 ```
-Remember to open the site first. See the `open_site` fixture in `test_loginpage.py`.
+Remember to open the site first with `LoginPage(self.page).open()`, or use the
+`logged_in_home_page` fixture if the test needs a logged-in user.
 
 ### New test data
 Add a row to a sheet in `Excel/testdata.xlsx`. Each row becomes one test run. Don't put real
@@ -249,7 +270,7 @@ cd NEETprep_Web_Test_Automation
 ./jenkins_run.sh
 ```
 The script supports the same settings as environment variables (`GIT_BRANCH_TO_TEST`, `TEST_PATH`,
-`BROWSER`). Its default `TEST_PATH` is `TestCases/test_loginpage.py`. Add a post-build step
+`BROWSER`). Its default `TEST_PATH` is `TestCases/test_login_bdd.py`. Add a post-build step
 **Archive the artifacts**: `NEETprep_Web_Test_Automation/reports/**, NEETprep_Web_Test_Automation/allure-results/**, NEETprep_Web_Test_Automation/test-results/**`.
 
 ### GitHub Actions
@@ -273,9 +294,9 @@ The workflow is defined in `.github/workflows/playwright-tests.yml`. You don't n
 | Test | Status |
 |---|---|
 | Login BDD: successful login via OTP | ✅ Passing |
+| Login BDD: successful logout after login | ✅ Passing |
+| Login BDD: wrong OTP shows the "Invalid OTP" error | ✅ Passing |
 | Shop BDD: search and add to cart | ✅ Passing (Chromium, Firefox) |
-| `test_valid_login` (login + logout) | ✅ Passing |
-| `test_invalid_login` (wrong OTP shows error) | ✅ Passing |
 | End-to-end Daily DPP (3 tests) | ⏭ Skipped: needs Daily DPP locators in `conf.ini` |
 
 **Known issues**
